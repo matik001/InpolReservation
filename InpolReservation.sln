@@ -5,6 +5,10 @@ VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InpolReservation", "InpolReservation\InpolReservation.csproj", "{7AF7121B-2223-45DC-B39D-35B9787E2154}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeathByCaptchaLib", "DeathByCaptchaLib\DeathByCaptchaLib.csproj", "{84E6F1C8-6842-495F-937C-E9FEAEC1C702}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InpolTempStay", "InpolTempStay\InpolTempStay.csproj", "{E2CD8699-254D-4DEB-A91F-9342A253ADD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{7AF7121B-2223-45DC-B39D-35B9787E2154}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AF7121B-2223-45DC-B39D-35B9787E2154}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AF7121B-2223-45DC-B39D-35B9787E2154}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84E6F1C8-6842-495F-937C-E9FEAEC1C702}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84E6F1C8-6842-495F-937C-E9FEAEC1C702}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84E6F1C8-6842-495F-937C-E9FEAEC1C702}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84E6F1C8-6842-495F-937C-E9FEAEC1C702}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2CD8699-254D-4DEB-A91F-9342A253ADD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2CD8699-254D-4DEB-A91F-9342A253ADD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2CD8699-254D-4DEB-A91F-9342A253ADD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2CD8699-254D-4DEB-A91F-9342A253ADD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
