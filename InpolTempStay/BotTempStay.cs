@@ -39,7 +39,7 @@ namespace InpolTempStay
                 options.AddArgument("--disable-search-engine-choice-screen");
 
                 try {
-                    var driver = new ChromeDriver(chromedriverservice, options);
+                    var driver = new ChromeDriver(chromedriverservice, options, TimeSpan.FromSeconds(300));
                     Task.Delay(2000).Wait();
                     driver.SwitchTo().Window(driver.WindowHandles[1]);
                     driver.Close();
