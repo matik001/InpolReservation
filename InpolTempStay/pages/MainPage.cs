@@ -6,18 +6,23 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium.Support.Extensions;
 using System.Threading;
+using System.Collections;
+using System.Text.RegularExpressions;
+using DeathByCaptcha;
 
 namespace InpolTempStay.pages
 {
     internal class MainPage
     {
         private readonly IWebDriver _driver;
-        private readonly FormInfo _config;
+        private readonly Config _config;
+        private readonly FormInfo _formInfo;
         private readonly CancellationToken _ct;
 
-        public MainPage(IWebDriver driver, FormInfo config, CancellationToken ct) {
+        public MainPage(IWebDriver driver, Config config, FormInfo formInfo, CancellationToken ct) {
             _driver = driver;
             _config = config;
+            _formInfo = formInfo;
             _ct = ct;
         }
 
@@ -35,14 +40,20 @@ namespace InpolTempStay.pages
         private By ByEmailPowiadomienie = By.Id($"nf-field-69");
         private By ByPobyt
         {
-            get => By.XPath($"//*[@id='nf-field-75-wrap']/div/ul/li/input[contains(@value, '{_config.PobytNaPodstawie}')]");
+            get => By.XPath($"//*[@id='nf-field-75-wrap']/div/ul/li/input[contains(@value, '{_formInfo.PobytNaPodstawie}')]");
         }
         private By ByDataWaznosciDokumentu = By.CssSelector($"#nf-field-85 + .ninja-forms-field");
         private By ByPelnomocnik = By.Id($"nf-field-86");
         private By ByRegulamin = By.Id($"nf-field-72");
         private By BySubmitBtn = By.Id($"nf-field-70");
 
-
+        private Predicate<IWebDriver> ErorrPred = (driver) =>
+        {
+            bool isError = (bool)(driver as IJavaScriptExecutor).ExecuteScript("window.location.href.includes('chrome-error')");
+            if(isError)
+                return true;
+            return false;
+        };
         public MainPage WaitForPageReady()
         {
             while(true)
@@ -51,9 +62,13 @@ namespace InpolTempStay.pages
                 try
                 {
                     //_driver.Navigate().GoToUrl("file:///C:/Users/mateu/Downloads/Compressed/Pobyt/Pobyt/Pobyt%20Czasowy.html");
+                    //_driver.Navigate().GoToUrl("http://safjsdlfjsda.eu");
                     _driver.Navigate().GoToUrl("https://pobyt-czasowy-zapis-na-zlozenie-wniosku.mazowieckie.pl");
-                    var currentBy = _driver.WaitForAny(new List<By> { ByNotAvailiableFrame, ByKodWnioskuInpol, }, 60);
+                    var currentBy = _driver.WaitForAny(new List<By> { ByNotAvailiableFrame, ByKodWnioskuInpol, },
+                                                    new List<Predicate<IWebDriver>>{ErorrPred}, 30);
                     if(currentBy == null)
+                        continue;
+                    else if(currentBy == ErorrPred)
                         continue;
                     else if(currentBy == ByNotAvailiableFrame)
                     {
@@ -73,7 +88,7 @@ namespace InpolTempStay.pages
                                 }
                                 continue;
                             }
-                            catch(Exception ex)
+                            catch(System.Exception ex)
                             {
                                 continue;
                             }
@@ -99,27 +114,74 @@ namespace InpolTempStay.pages
         }
         public MainPage FillForm() 
         {
-            _driver.FindElement(ByKodWnioskuInpol).SendKeys(_config.KodWnioskuInpol);
-            _driver.FindElement(ByKodWnioskuBOS).SendKeys(_config.KodWnioskuMOS);
-            _driver.FindElement(ByImie).SendKeys(_config.ImieCudzoziemca);
-            _driver.FindElement(ByNazwisko).SendKeys(_config.NazwiskoCudzoziemca);
-            _driver.FindElement(ByDataUrodzenia).PickDate(DateTime.Parse(_config.DataUrodzenia));
-            _driver.FindElement(ByNrPaszportu).SendKeys(_config.NumerPaszportu);
-            _driver.FindElement(ByObywatelstwo).SendKeys(_config.Obywatelstwo);
-            _driver.FindElement(ByNrTelRP).SendKeys(_config.NumerTelefonuRP);
-            _driver.FindElement(ByEmailPowiadomienie).SendKeys(_config.EmailPowiadomienie);
+            _driver.FindElement(ByKodWnioskuInpol).SendKeys(_formInfo.KodWnioskuInpol);
+            _driver.FindElement(ByKodWnioskuBOS).SendKeys(_formInfo.KodWnioskuMOS);
+            _driver.FindElement(ByImie).SendKeys(_formInfo.ImieCudzoziemca);
+            _driver.FindElement(ByNazwisko).SendKeys(_formInfo.NazwiskoCudzoziemca);
+            _driver.FindElement(ByDataUrodzenia).PickDate(DateTime.Parse(_formInfo.DataUrodzenia));
+            _driver.FindElement(ByNrPaszportu).SendKeys(_formInfo.NumerPaszportu);
+            _driver.FindElement(ByObywatelstwo).SendKeys(_formInfo.Obywatelstwo);
+            _driver.FindElement(ByNrTelRP).SendKeys(_formInfo.NumerTelefonuRP);
+            _driver.FindElement(ByEmailPowiadomienie).SendKeys(_formInfo.EmailPowiadomienie);
             _driver.FindElement(ByPobyt).ClickJS();
-            _driver.FindElement(ByDataWaznosciDokumentu).PickDate(DateTime.Parse(_config.DataWaznosciDokumentu));
-            _driver.FindElement(ByPelnomocnik).SendKeys(_config.DanePelnomocnika);
+            _driver.FindElement(ByDataWaznosciDokumentu).PickDate(DateTime.Parse(_formInfo.DataWaznosciDokumentu));
+            _driver.FindElement(ByPelnomocnik).SendKeys(_formInfo.DanePelnomocnika);
             _driver.FindElement(ByRegulamin).ClickJS();
-
-            Task.Delay(10000, _ct).Wait();
+            if(!_config.SolveFormCaptcha)
+                return this;
+            SolveCaptcha();
             _ct.ThrowIfCancellationRequested();
-
             _driver.FindElement(BySubmitBtn).ClickJS();
-
-            Task.Delay(10000, _ct).Wait();
             return this;
+        }
+
+        private void SolveCaptcha()
+        {
+            var captchaElem = _driver.FindElement(By.ClassName("g-recaptcha"));
+            var sitekey = captchaElem.GetAttribute("data-sitekey");
+            var callback = captchaElem.GetAttribute("data-callback");
+
+
+
+            string proxy = "";
+            string proxyType = "";
+            string pageurl = _driver.Url;
+
+            string tokenParams = "{\"proxy\": \"" + proxy + "\"," +
+                                 "\"proxytype\": \"" + proxyType + "\"," +
+                                 "\"googlekey\": \"" + sitekey + "\"," +
+                                 "\"pageurl\": \"" + pageurl + "\"}";
+            try
+            {
+                Client client = (Client)new SocketClient(_config.DBCLogin, _config.DBCPass);
+
+                Captcha captcha = client.Decode(100,
+                    new Hashtable()
+                    {
+                        {"type", 4},
+                        {"token_params", tokenParams}
+                    });
+
+                
+                if(null != captcha)
+                {
+                    _driver.ExecuteJavaScript(
+                        $"document.getElementsByName('g-recaptcha-response')[0].innerHTML='{captcha.Text}'");
+                    Thread.Sleep(300);
+                    _driver.ExecuteJavaScript($"{callback}('{captcha.Text}')");
+                    //_driver.ActivateCaptcha(captcha.Text);
+                    Thread.Sleep(1000);
+                }
+                else
+                {
+                    throw new System.Exception("Captcha not solved");
+                }
+            }
+            catch(AccessDeniedException e)
+            {
+                throw;
+            }
+
         }
     }
 }

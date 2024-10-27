@@ -40,11 +40,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.totalPeopleLabel = new System.Windows.Forms.Label();
             this.addedPeopleLabel = new System.Windows.Forms.Label();
+            this.totalPeopleLabel = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBoxSolveCaptchaOnForm = new System.Windows.Forms.CheckBox();
             this.settingsGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -96,6 +97,7 @@
             // 
             // settingsGroup
             // 
+            this.settingsGroup.Controls.Add(this.checkBoxSolveCaptchaOnForm);
             this.settingsGroup.Controls.Add(this.dbcPass);
             this.settingsGroup.Controls.Add(this.label3);
             this.settingsGroup.Controls.Add(this.label2);
@@ -176,33 +178,14 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Execution";
             // 
-            // groupBox3
+            // addedPeopleLabel
             // 
-            this.groupBox3.Controls.Add(this.logs);
-            this.groupBox3.Location = new System.Drawing.Point(439, 12);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(383, 416);
-            this.groupBox3.TabIndex = 16;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Logs";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(64, 32);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(87, 16);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Total people:";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(64, 66);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(97, 16);
-            this.label5.TabIndex = 16;
-            this.label5.Text = "Added people:";
+            this.addedPeopleLabel.AutoSize = true;
+            this.addedPeopleLabel.Location = new System.Drawing.Point(167, 66);
+            this.addedPeopleLabel.Name = "addedPeopleLabel";
+            this.addedPeopleLabel.Size = new System.Drawing.Size(14, 16);
+            this.addedPeopleLabel.TabIndex = 18;
+            this.addedPeopleLabel.Text = "0";
             // 
             // totalPeopleLabel
             // 
@@ -213,14 +196,44 @@
             this.totalPeopleLabel.TabIndex = 17;
             this.totalPeopleLabel.Text = "0";
             // 
-            // addedPeopleLabel
+            // label5
             // 
-            this.addedPeopleLabel.AutoSize = true;
-            this.addedPeopleLabel.Location = new System.Drawing.Point(167, 66);
-            this.addedPeopleLabel.Name = "addedPeopleLabel";
-            this.addedPeopleLabel.Size = new System.Drawing.Size(14, 16);
-            this.addedPeopleLabel.TabIndex = 18;
-            this.addedPeopleLabel.Text = "0";
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(64, 66);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(97, 16);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "Added people:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(64, 32);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(87, 16);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Total people:";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.logs);
+            this.groupBox3.Location = new System.Drawing.Point(439, 12);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(383, 416);
+            this.groupBox3.TabIndex = 16;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Logs";
+            // 
+            // checkBoxSolveCaptchaOnForm
+            // 
+            this.checkBoxSolveCaptchaOnForm.AutoSize = true;
+            this.checkBoxSolveCaptchaOnForm.Location = new System.Drawing.Point(20, 156);
+            this.checkBoxSolveCaptchaOnForm.Name = "checkBoxSolveCaptchaOnForm";
+            this.checkBoxSolveCaptchaOnForm.Size = new System.Drawing.Size(205, 20);
+            this.checkBoxSolveCaptchaOnForm.TabIndex = 15;
+            this.checkBoxSolveCaptchaOnForm.Text = "Should solve captcha on form";
+            this.checkBoxSolveCaptchaOnForm.UseVisualStyleBackColor = true;
+            this.checkBoxSolveCaptchaOnForm.CheckedChanged += new System.EventHandler(this.checkBoxSolveCaptchaOnForm_CheckedChanged);
             // 
             // FormTempStay
             // 
@@ -265,6 +278,7 @@
         private System.Windows.Forms.Label addedPeopleLabel;
         private System.Windows.Forms.Label totalPeopleLabel;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox checkBoxSolveCaptchaOnForm;
     }
 }
 

@@ -14,6 +14,7 @@ namespace InpolTempStay
         public string DBCPass { get; set; }
         public bool Headless { get; set; }
         public int Workers { get; set; }
+        public bool SolveFormCaptcha { get; set; }
 
         public static Config Load(string path)
         {

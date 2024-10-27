@@ -18,12 +18,12 @@ namespace InpolTempStay
 {
     class BotTempStay 
     {
-        private Action<string> log;
+        protected Action<string> log;
         
         public BotTempStay(Action<string> log) {
             this.log = log;
         }
-        public async Task Start(Config config, FormInfo formInfo, CancellationToken ct) 
+        public virtual async Task Start(Config config, FormInfo formInfo, CancellationToken ct) 
         {
             await Task.Factory.StartNew(() => {
                 var options = new ChromeOptions();
@@ -39,26 +39,25 @@ namespace InpolTempStay
                 options.AddArgument("--disable-search-engine-choice-screen");
 
                 try {
-                    using(var driver = new ChromeDriver(chromedriverservice, options)) {
-                        Task.Delay(2000).Wait();
-                        driver.SwitchTo().Window(driver.WindowHandles[1]);
-                        driver.Close();
-                        driver.SwitchTo().Window(driver.WindowHandles[0]);
+                    var driver = new ChromeDriver(chromedriverservice, options);
+                    Task.Delay(2000).Wait();
+                    driver.SwitchTo().Window(driver.WindowHandles[1]);
+                    driver.Close();
+                    driver.SwitchTo().Window(driver.WindowHandles[0]);
 
-                        ConfigDBCPage configDBCPage = new ConfigDBCPage(driver);
-                        configDBCPage.Login(config.DBCLogin, config.DBCPass);
+                    ConfigDBCPage configDBCPage = new ConfigDBCPage(driver);
+                    configDBCPage.Login(config.DBCLogin, config.DBCPass);
 
 
-                        log($"Started for {formInfo.ImieCudzoziemca} {formInfo.NazwiskoCudzoziemca}");
+                    log($"Started for {formInfo.ImieCudzoziemca} {formInfo.NazwiskoCudzoziemca}");
 
-                        MainPage mainPage = new MainPage(driver, formInfo, ct);
-                        mainPage.WaitForPageReady()
-                                .FillForm();
-                        log($"Filled for {formInfo.ImieCudzoziemca} {formInfo.NazwiskoCudzoziemca}");
+                    MainPage mainPage = new MainPage(driver, config, formInfo, ct);
+                    mainPage.WaitForPageReady()
+                            .FillForm();
+                    log($"Filled for {formInfo.ImieCudzoziemca} {formInfo.NazwiskoCudzoziemca}");
 
-                        if(ct.IsCancellationRequested)
-                            return;
-                    }
+                    if(ct.IsCancellationRequested)
+                        return;
                 }
                 catch(Exception ex)
                 {

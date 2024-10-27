@@ -26,7 +26,7 @@ namespace InpolTempStay
             return driver.FindElement(by);
         }
 
-        public static By WaitForAny(this IWebDriver driver, List<By> byList, int timeoutInSeconds)
+        public static object WaitForAny(this IWebDriver driver, List<By> byList, List<Predicate<IWebDriver>> predList, int timeoutInSeconds)
         {
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
             try
@@ -37,7 +37,12 @@ namespace InpolTempStay
                     {
                         var elem = drv.TryFindElement(by);
                         if(elem != null)
-                            return by;
+                            return (object)by;
+                    }
+                    foreach(var pred in predList)
+                    {
+                        if(pred(drv))
+                            return (object)pred;
                     }
                     return null;
                 });
@@ -157,6 +162,10 @@ namespace InpolTempStay
             var day = driver.FindElement(By.XPath($"//div[contains(@class, 'open')]//span[text()='{date.Day}']"));
             day.Click();
             //(elem as WebElement).WrappedDriver.ExecuteJavaScript("arguments[0].click();", elem);
+        }
+        public static void ActivateCaptcha(this IWebDriver driver, string solution)
+        {
+            driver.ExecuteJavaScript("const findName = (obj, name)=>{\r\n\tif(obj == null || typeof obj !== 'object')\r\n\t\treturn  null;\r\n\tconst keys = Object.keys(obj);\r\n\tfor(const key of keys){\r\n\t\tif(key === name)\r\n\t\t\treturn obj[key];\r\n\t\tconst res = findName(obj[key], name);\r\n\t\tif(res)\r\n\t\t\treturn res;\r\n\t}\t\r\n}\r\n\r\n\r\nconst captchaClient = window.___grecaptcha_cfg.clients[Object.keys(window.___grecaptcha_cfg.clients).length-1];\r\nfindName(captchaClient, \"callback\")('" + solution + "');");
         }
     }
 }

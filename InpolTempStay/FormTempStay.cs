@@ -37,6 +37,8 @@ namespace InpolTempStay
         }
         private async void Form1_Load(object sender, EventArgs e)
         {
+            config = Config.Load(configPath);
+            ConfigToView();
             var permissionError = await CheckPermission();
             if(permissionError != null)
             {
@@ -44,8 +46,6 @@ namespace InpolTempStay
                 Environment.Exit(0);
             }
 
-            config = Config.Load(configPath);
-            ConfigToView();
         }
 
         public FormTempStay()
@@ -74,6 +74,7 @@ namespace InpolTempStay
             dbcPass.Text = config.DBCPass;
             headlessCheckbox.Checked = config.Headless;
             numericUpDown1.Value = config.Workers;
+            checkBoxSolveCaptchaOnForm.Checked = config.SolveFormCaptcha;
             isModifiedByCode = false;
         }
         private void ViewToConfig()
@@ -83,7 +84,8 @@ namespace InpolTempStay
                 DBCLogin = dbcLogin.Text,
                 DBCPass = dbcPass.Text,
                 Headless = headlessCheckbox.Checked,
-                Workers = (int)numericUpDown1.Value
+                Workers = (int)numericUpDown1.Value,
+                SolveFormCaptcha = checkBoxSolveCaptchaOnForm.Checked
             };
             config.Save(configPath);
         }
@@ -161,6 +163,12 @@ namespace InpolTempStay
         private void logs_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void checkBoxSolveCaptchaOnForm_CheckedChanged(object sender, EventArgs e)
+        {
+            if(!isModifiedByCode)
+                ViewToConfig();
         }
     }
 }
